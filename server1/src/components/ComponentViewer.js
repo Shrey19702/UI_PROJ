@@ -28,7 +28,7 @@ export default function ComponentViewer() {
                 Component_Viewer {comp_data.message}
             </div>
             <div className=" py-16 px-10 min-h-96 min-w-96 bg-yellow-50">
-                <div className=" bg-green-300 rounded-md overflow-hidden ">
+                <div className="  rounded-md overflow-hidden ">
                     <ResizableBox 
                         width={1200} height={500} 
                         
@@ -36,13 +36,13 @@ export default function ComponentViewer() {
                         axis="x"
                         maxConstraints={[Infinity, Infinity]}
                         resizeHandles={['e']}
-                        className=" flex"
+                        className=" flex justify-center items-center"
                         handle={ 
                             <div 
                                 onMouseEnter={()=>{setexp(true)}}
                                 onMouseLeave={()=>{setexp(false)}}
                                 
-                                className=" w-5 cursor-grab bg-black " 
+                                className=" w-3 h-[95%] rounded-e-md cursor-grab bg-black/80 " 
                             >
                                 <ResizeHandle exp={exp} />
                             </div> 
@@ -50,9 +50,8 @@ export default function ComponentViewer() {
                     >
                         <iframe
                             title={`component-${comp_data.id}`}
-                            className=" w-full h-full"
-                            src="http://bing.com"
-
+                            className=" w-full h-full rounded-md"
+                            src="http://localhost:3000/react"
                         />
                     </ResizableBox>
 

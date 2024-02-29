@@ -6,6 +6,7 @@ import {
 import Root, { loader as rootLoader } from "./components/Root"
 import ErrorPage from "./components/ErrorPage"
 import ComponentViewer, {loader as componentLoader} from "./components/ComponentViewer"
+import PostComponents from "./components/PostComponents";
 
 
 const router = createBrowserRouter([
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
         element: <ComponentViewer />,
         loader: componentLoader,
       },
+      {
+        path: "post-component",
+        element: <PostComponents />
+      }
     ],
   },
 
