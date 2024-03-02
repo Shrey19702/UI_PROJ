@@ -12,7 +12,7 @@ export async function loader({ params }) {
 function ResizeHandle({exp}){
     return (
         <div 
-            className={` ${exp ? ' relative -left-36 h-full w-40  ': 'w-0' } overflow-hidden  `}
+            className={` ${exp ? ' relative -left-36 h-full w-40  ': "" } overflow-hidden  `}
         />
     )
 }
@@ -22,21 +22,27 @@ export default function ComponentViewer() {
     const { comp_data } = useLoaderData();
     const [exp, setexp] = useState(false);
 
+    console.log(comp_data)
+
     return (
         <>
             <div className="bg-sky-200 text-4xl w-full h-72">
-                Component_Viewer {comp_data.message}
+                Component_Viewer 
+                <div> name: {comp_data.data.name}</div>
+                <div> type: {comp_data.data.type}</div>
+                <div> tags: {comp_data.data.tags.map((val)=>(val+" ,"))}</div>
+                
             </div>
             <div className=" py-16 px-10 min-h-96 min-w-96 bg-yellow-50">
-                <div className="  rounded-md overflow-hidden ">
+                <div className="  rounded-md   ">
                     <ResizableBox 
-                        width={1200} height={500} 
+                        width={900} height={500} 
                         
                         minConstraints={[340, 340]} 
                         axis="x"
                         maxConstraints={[Infinity, Infinity]}
                         resizeHandles={['e']}
-                        className=" flex justify-center items-center"
+                        className=" w-full flex justify-center items-center "
                         handle={ 
                             <div 
                                 onMouseEnter={()=>{setexp(true)}}
@@ -50,8 +56,8 @@ export default function ComponentViewer() {
                     >
                         <iframe
                             title={`component-${comp_data.id}`}
-                            className=" w-full h-full rounded-md"
-                            src="http://localhost:3000/react"
+                            className=" w-full h-full rounded-md shadow-2xl bg-white"
+                            src= {comp_data.link}
                         />
                     </ResizableBox>
 

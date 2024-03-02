@@ -15,13 +15,18 @@ export default function Root() {
                 <div>{`${component_data.message}`}</div>
                 <div>Links:--</div>
                 <div>
-                    <Link to={'component/1'}>
+                    <Link to={'component/65e36989c1c37e402747af6e'}>
                         1. COMPONENT 1
                     </Link>
                 </div>
                 <div>
-                    <Link to={'component/2'}>
+                    <Link to={'component/65e36aefc1c37e402747af70'}>
                         2. COMPONENT 2
+                    </Link>
+                </div>
+                <div>
+                    <Link to={'post-component'}>
+                        3. POST ELEMENT
                     </Link>
                 </div>
                 <div>
