@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
 
-const get_react_file = require('./react-file.js')
-const Element = require('./schema.js')
+const get_file = require('./files.js');
+const Element = require('./schema.js');
 
 const app = express();
 
@@ -26,72 +26,28 @@ mongoose.connect('mongodb://root:password@localhost:27017')
         console.error('MongoDB connection error:', error);
     });
 
-
-
 // ROUTES:-   1. JS  |  2. React
 
 app.get('/js/:id', async (req, res) => {
     const id = req.params.id;
-    // console.log('######->>>>>>>>>',id)
     try {
         const db_response = await Element.findOne({ _id: id }).select('code');
         const data = db_response.code;
         let file = '';
 
         if (data) {
-            file = `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.tailwindcss.com"></script>
-            
-                <title>TYPE 1 FILE</title>
-            </head>
-            <body class="m-0 p-0">
-                ${data}
-            </body>
-            </html>`;
+            file = get_file.get_js_file(data);
         }
         else {
-            file = `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.tailwindcss.com"></script>
-            
-                <title>TYPE 1 FILE</title>
-            </head>
-            <body class="m-0 p-0">
-                <div class=" bg-red-200 w-full h-96 text-5xl my-auto "> ELEMENT NOT FOUND </div>
-            </body>
-            </html>`;
+            file = get_file.get_not_found();
         }
         res.send(file);
     }
     catch (err) {
         console.log('error in fetching element using id :', err);
-        let file = `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script src="https://cdn.tailwindcss.com"></script>
-        
-            <title>TYPE 1 FILE</title>
-        </head>
-        <body class="m-0 p-0">
-            <div class=" bg-red-200 w-full h-96 text-5xl my-auto text-wrap "> 
-                500: INTERNAL SERVER ERROR 
-                <br/>
-                ERROR: ${err} 
-            </div>
-        </body>
-        </html>`;
+        let file = get_file.get_500_error(err);
         res.send(file);
     }
-
 });
 
 app.get('/react/:id', async (req, res) => {
@@ -102,44 +58,16 @@ app.get('/react/:id', async (req, res) => {
         let file = '';
 
         if (data) {
-            file = get_react_file(data);
+            file = get_file.get_react_file(data);
         }
         else {
-            file = `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://cdn.tailwindcss.com"></script>
-            
-                <title>TYPE 1 FILE</title>
-            </head>
-            <body class="m-0 p-0">
-                <div class=" bg-red-200 w-full h-96 text-5xl my-auto "> ELEMENT NOT FOUND </div>
-            </body>
-            </html>`;
+            file = get_file.get_not_found();
         }
         res.send(file);
     }
     catch (err) {
         console.log('error in fetching element using id :', err);
-        let file = `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <script src="https://cdn.tailwindcss.com"></script>
-        
-            <title>TYPE 1 FILE</title>
-        </head>
-        <body class="m-0 p-0">
-            <div class=" bg-red-200 w-full h-96 text-5xl my-auto text-wrap "> 
-                500: INTERNAL SERVER ERROR 
-                <br/>
-                ERROR: ${err} 
-            </div>
-        </body>
-        </html>`;
+        let file = get_file.get_500_error(err);
         res.send(file);
     }
 });

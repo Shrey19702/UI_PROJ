@@ -1,7 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+venv/
+.env/
 node_modules
+
+Lib
+Include
+share
+Scripts
+pyvenv.cfg
+__pycache__
+
 /.pnp
 .pnp.js
 

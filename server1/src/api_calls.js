@@ -18,3 +18,7 @@ export async function get_ComponentViewer() {
     // code to fecth component data here
     return (<>HI</>);
 }
+
+export const get_all_components = async function(){
+    return {message: "ALL COMPONENTS TO BE FETCHED"};
+}

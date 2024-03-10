@@ -41,14 +41,14 @@ export default function PostComponents() {
 
     return (
         <>
-            <div className=" bg-slate-400 w-full h-fit py-5 px-10">
+            <div className=" text-white w-full h-fit py-5 px-10">
                 <form onSubmit={handleSubmit}>
                     {/* name */}
                     <div className="flex gap-5 items-center my-2">
                         <div className="text-xl">Element Name :</div>
                         <input
                             required name="name" type="text"
-                            className=" outline-none p-2 rounded-sm w-96"
+                            className=" text-black outline-none p-2 rounded-sm w-96"
                             placeholder="NAME" value={name}
                             onChange={(e) => { setname(e.target.value) }}
                         />
@@ -57,7 +57,7 @@ export default function PostComponents() {
                     <div className="flex gap-5 items-center my-2">
                         <div className="text-xl">Element Type :</div>
                         <select
-                            className=" outline-none p-2 rounded-sm w-72 "
+                            className=" text-black outline-none p-2 rounded-sm w-72 "
                             name="name"
                             onChange={(e) => { settype(e.target.value) }}
                         >
@@ -93,7 +93,7 @@ export default function PostComponents() {
                         </div>
                         <div className='flex gap-5'>
                             <input
-                                className=" outline-none p-2 rounded-sm"
+                                className=" text-black outline-none p-2 rounded-sm"
                                 name="name" type="text" placeholder="TAG"
                                 value={tag_input}
                                 onChange={(e) => { settag_input(e.target.value) }}
@@ -116,7 +116,7 @@ export default function PostComponents() {
                     {/* code */}
                     <div className="flex flex-col my-2 gap-3">
                         <div className="text-xl">Element Code :</div>
-                        <textarea onChange={(e) => { setcode(e.target.value) }} value={code} required className=" outline-none p-2 rounded-sm" name="code" cols="30" rows="10"></textarea>
+                        <textarea onChange={(e) => { setcode(e.target.value) }} value={code} required className=" text-black outline-none p-2 rounded-sm" name="code" cols="30" rows="10"></textarea>
                     </div>
                     <div className='flex justify-center'>
                         <button type="submit" className=' transition-all bg-red-400 hover:bg-red-500 p-4 font-medium rounded-lg my-4 ' >
