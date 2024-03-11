@@ -22,8 +22,8 @@ function Card({ name }) {
         setval([newX, newY])
     }
     return (
-        <div onMouseMove={handleMove}>
-            <div className="w-96 h-20 bg-transparent block absolute z-10 rounded-xl " />
+        <div onMouseMove={handleMove} >
+            <Link to={`/components#${name}`} className="w-96 h-20 bg-transparent block absolute z-10 rounded-xl cursor-pointer " />
             <div className=" relative overflow-hidden border border-stone-600 bg-zinc-700/50 h-20 w-96 flex items-center justify-center rounded-xl">
                 <div>{name}</div>
                 <div style={{ "transform": `translate(${val[0]}px, ${val[1]}px)` }} className={`h-20 w-32 bg-gradient-to-t from-black/50 via-slate-50/50  to-black/50 relative blur-2xl  `} />
@@ -50,12 +50,11 @@ function ComponentTypes() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                             </svg>
                         </span>
-
                     </Link>
                 </div>
 
                 <div className=" flex py-10 gap-10 flex-wrap items-center justify-evenly font-medium text-2xl">
-                    <Card name={"Navbar"} />
+                    <Card name={"Navbars"} />
                     <Card name={"Sidebars"} />
                     <Card name={"Tables"} />
                     <Card name={"Forms"} />

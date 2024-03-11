@@ -1,16 +1,30 @@
-import { useState } from "react";
-import { Link} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation} from "react-router-dom";
 
 const states = {
     ////top left width height
-    "Home": [8, 12, 72, 32],
-    "Components": [8, 95, 118, 32],
-    "Create": [8, 222, 72, 32],
-    "Search": [8, 305, 75, 32],
+    "Home": [8, 10, 72, 32],
+    "Components": [8, 92, 118, 32],
+    "Create": [8, 220, 72, 32],
+    "Search": [8, 302, 75, 32],
 }
 
 export default function Navbar() {
     const [select, setselect] = useState("Home");
+    const location = useLocation();
+
+    useEffect(()=>{
+        if(location){
+            if(location.pathname === '/')
+                setselect("Home")
+            else if(location.pathname === '/components')
+                setselect("Components")
+            else if(location.pathname === '/create')
+                setselect("Create")
+            else if(location.pathname === '/search')
+                setselect("Search")
+        }
+    }, [select, location])
     return (
         <div className=" top-4 left-1/2 -translate-x-1/2 w-fit text-white backdrop-blur-md backdrop-brightness-50 bg-black/20 border border-white/50 rounded-full z-50 fixed shadow-inner">
 
@@ -21,7 +35,7 @@ export default function Navbar() {
                     className={` select-none p-2 rounded-full border-0 bg-transparent hover:text-white ${select === "Home" ? 'text-white': 'text-white/70'} relative cursor-pointer transition-all `}
                     onClick={()=>{setselect("Home")}} 
                 >
-                    <Link to={'/'}>HOME</Link>
+                    <Link to={'/'}>Home</Link>
                 </div>
                 <div 
                     className={` select-none p-2 rounded-full border-0 bg-transparent hover:text-white ${select === "Components" ? 'text-white': 'text-white/70'} relative cursor-pointer transition-all `}

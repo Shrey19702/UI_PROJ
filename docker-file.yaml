@@ -1,21 +1,28 @@
 version: '3.1'
 services:
-#  mongo-db:
-#   image: mongo
-#   ports:
-#    - 27017:27017
-#   environment:
-#    MONGO_INITDB_ROOT_USERNAME: "root"
-#    MONGO_INITDB_ROOT_PASSWORD: "password"
+ mongo-db:
+  image: mongo
+  ports:
+   - 27017:27017
+  environment:
+   MONGO_INITDB_ROOT_USERNAME: "root"
+   MONGO_INITDB_ROOT_PASSWORD: "password"
+  volumes:
+   - mongo-vol:/data/db
+  networks:
+   - private
 
-#  mongo-express:
-#   image: mongo-express
-#   ports:
-#    - 8081:8081
-#   environment: 
-#    ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
-#    ME_CONFIG_BASICAUTH_USERNAME: "root" 
-#    ME_CONFIG_BASICAUTH_PASSWORD: "password" 
+ mongo-express:
+  image: mongo-express
+  ports:
+   - 8081:8081
+  environment: 
+   ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
+   ME_CONFIG_BASICAUTH_USERNAME: "root" 
+   ME_CONFIG_BASICAUTH_PASSWORD: "password" 
+  networks:
+   - private
+   - public
 
  sql-db:
   image: postgres
@@ -26,9 +33,23 @@ services:
   environment:
    POSTGRES_PASSWORD: password
    POSTGRES_DB: vector-embeddings
+  volumes:
+      - postgres-vol:/var/lib/postgresql/data
+  networks:
+   - private
 
  adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    networks:
+     - private
+     - public
+
+networks:
+ public:
+ private:
+volumes:
+ postgres-vol:
+ mongo-vol:

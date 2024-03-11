@@ -54,6 +54,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
+    {/* svg background */}
     <div className="h-screen fixed w-screen bg-black -z-10">
       <svg className=" h-screen w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>

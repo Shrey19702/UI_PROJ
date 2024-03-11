@@ -72,6 +72,23 @@ app.get('/react/:id', async (req, res) => {
     }
 });
 
+app.get('/get-all-elements', async (req, res) => {
+    try{
+        const elements = await Element.find({});
+        res.status(200).json({
+            success: true,
+            data: elements,
+            // link: `http://localhost:5000/${element.type.toLowerCase()}/${element._id.toString()}`
+        })
+    }
+    catch(err){
+        console.log('error in fetching elements :', err)
+        res.status(500).json({
+            success: false,
+            message: "500: internal server error :- " + err
+        })
+    }
+})
 
 // APIs:-  
 //0. get document <react / html >

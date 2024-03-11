@@ -5,7 +5,7 @@ export const get_component = async function (params = null) {
         const response = await fetch(`http://localhost:5000/api/get-element/${params}`);
         const data = await response.json();
 
-        console.log(data);
+        // console.log(data);
         return data;
     }
     return {
@@ -20,5 +20,15 @@ export async function get_ComponentViewer() {
 }
 
 export const get_all_components = async function(){
+    try{
+        const response = await fetch(`http://localhost:5000/get-all-elements/`);
+        const json_res = await response.json();
+
+        console.log(json_res);
+        return json_res.data;
+    }
+    catch(err){
+        console.log('error in fetching all elements')
+    }
     return {message: "ALL COMPONENTS TO BE FETCHED"};
 }

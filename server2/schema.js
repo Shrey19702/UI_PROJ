@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+// {
+//   name: "name",
+//   type: "react/js",
+//   tags: ["tag1", "tag2", "tag3"],
+//   code: ` this is the code `
+// }
+
 const elementSchema = new mongoose.Schema({
   name: {
     type: String,

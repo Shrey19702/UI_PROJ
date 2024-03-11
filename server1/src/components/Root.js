@@ -10,7 +10,7 @@ export async function loader() {
 
 export default function Root() {
     const {component_data} = useLoaderData();
-    console.log(component_data)
+    // console.log(component_data)
     return (
         <>
             <Navbar/>
