@@ -1,18 +1,30 @@
+import { useLoaderData } from "react-router-dom";
+import { get_component } from "../api_calls";
 import { useState } from 'react'
 
-export default function PostComponents() {
+export async function loader({ params }) {
+    // console.log(params)
+    const comp_data = await get_component(params.comp_Id);
+    // console.log(comp_data.data);
+    return { comp_data };
+}
+
+export default function ComponentsEditor() {
+    //Get element data from params
+    const { comp_data } = useLoaderData();
+
     const [tag_input, settag_input] = useState('');
     //form submition variables
-    const [tags, settags] = useState([]);
-    const [name, setname] = useState('');
-    const [type, settype] = useState('JS');
-    const [code, setcode] = useState('');
-    const [category, setcategory] = useState('');
-
+    const [tags, settags] = useState(comp_data.data.tags);
+    const [name, setname] = useState(comp_data.data.name);
+    const [type, settype] = useState(comp_data.data.type);
+    const [code, setcode] = useState(comp_data.data.code);
+    const [category, setcategory] = useState(comp_data.data.category===null ? 'Uncategorised' : comp_data.data.category);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            const url = "http://localhost:5000/api/create-element"
+            const url = `http://localhost:5000/api/update-element/${comp_data.data._id}`
             const options = {
                 method: 'POST',
                 headers: {
@@ -29,7 +41,7 @@ export default function PostComponents() {
             const response = await fetch(url , options);
             const responseData = await response.json();
             if(responseData.success){
-                alert('Submitted Sucessfully');
+                alert('Updated Sucessfully');
             }
             else{
                 alert('Error Occured: '+responseData.message);
@@ -43,8 +55,8 @@ export default function PostComponents() {
 
     return (
         <>
-            <div className=" text-white w-full h-fit py-24 px-10 bg-gradient-to-t from-orange-400/50 via-90% via-orange-900/50">
-                <div className=' text-5xl font-bold mb-10 text-yellow-500' >Create New UI Element</div>
+            <div className=" text-white w-full h-fit py-24 px-10">
+                <div className=' text-5xl font-bold mb-10 text-yellow-500' >Edit UI Element</div>
                 <form className='flex flex-col gap-8' onSubmit={handleSubmit}>
                     {/* name */}
                     <div className="flex flex-col gap-2">

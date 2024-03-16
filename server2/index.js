@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
 
 const get_file = require('./files.js');
 const Element = require('./schema.js');
@@ -18,7 +19,7 @@ app.use(
 app.use(cors());
 
 // MONGOOSE CONNECTION TO MONGODB
-mongoose.connect('mongodb://root:password@localhost:27017')
+mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@localhost:27017`)
     .then(() => {
         console.log('MongoDB connected');
     })
@@ -72,13 +73,59 @@ app.get('/react/:id', async (req, res) => {
     }
 });
 
+// Check if connected to db for APIs
+const db_check = function(res){
+
+    if (mongoose.connection.readyState !== 1) {
+        console.log('Not connected to db ')
+        res.status(500).json({
+            success: false,
+            message: "500: Database Not Connected "
+        })
+        return false;
+    }
+    else
+        return true;
+}
+
+//return all elements
 app.get('/get-all-elements', async (req, res) => {
+    
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+    
     try{
         const elements = await Element.find({});
         res.status(200).json({
             success: true,
             data: elements,
             // link: `http://localhost:5000/${element.type.toLowerCase()}/${element._id.toString()}`
+        })
+    }
+    catch(err){
+        console.log('error in fetching elements :', err)
+        res.status(500).json({
+            success: false,
+            message: "500: internal server error :- " + err
+        })
+    }
+})
+
+app.get('/get-elements-by-category', async (req, res)=>{
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+    
+    try{
+        const elementsByCategory = await Element.aggregate([
+            // Group documents by category
+            { $group: { _id: '$category', elements: { $push: '$$ROOT' } } }
+        ]);
+        
+        res.status(200).json({
+            success: true,
+            data: elementsByCategory,
         })
     }
     catch(err){
@@ -101,6 +148,11 @@ app.get('/get-all-elements', async (req, res) => {
 //GET ELEMENT BY ID
 app.get('/api/get-element/:id', async (req, res) => {
     const id = req.params.id;
+    
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+
     try {
         const element = await Element.findById(id);
         if (!element) {
@@ -131,6 +183,11 @@ app.get('/api/get-element/:id', async (req, res) => {
 
 //SAVE A NEW ELEMENT
 app.post('/api/create-element', async (req, res) => {
+
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+
     try {
         const data = req.body;
 
@@ -139,8 +196,11 @@ app.post('/api/create-element', async (req, res) => {
             type: data.type, //js html or react component
             tags: data.tags, //tags of the element for recomender
             code: data.code, //the code for element in text format 
+            category : data.category
         })
         const savedElement = await newElement.save();
+
+        console.log(savedElement);
 
         res.status(201).json({
             success: true,
@@ -159,6 +219,11 @@ app.post('/api/create-element', async (req, res) => {
 
 //UPDATE A ELEMENT
 app.post('/api/update-element/:id', async (req, res) => {
+
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+
     try {
         const data = req.body;
 
@@ -169,6 +234,7 @@ app.post('/api/update-element/:id', async (req, res) => {
         ele.type = data.type; //js html or react component
         ele.tags = data.tags; //tags of the element for recomender
         ele.code = data.code; //the code for element in text format 
+        ele.category = data.category;
 
         const savedElement = await ele.save();
 
@@ -189,6 +255,11 @@ app.post('/api/update-element/:id', async (req, res) => {
 
 //DELETE A ELEMENT
 app.delete('/api/delete/:id', async (req, res) => {
+    
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+
     try {
         const id = req.params.id;
         const res = await Element.findByIdAndDelete(id);

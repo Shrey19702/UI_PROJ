@@ -24,8 +24,14 @@ export const get_all_components = async function(){
         const response = await fetch(`http://localhost:5000/get-all-elements/`);
         const json_res = await response.json();
 
-        console.log(json_res);
-        return json_res.data;
+        // console.log(json_res);
+        if(json_res.success){
+            return json_res.data;
+        }
+        else{
+            console.error(json_res.message)
+            return [];
+        }
     }
     catch(err){
         console.log('error in fetching all elements')

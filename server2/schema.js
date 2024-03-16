@@ -20,6 +20,10 @@ const elementSchema = new mongoose.Schema({
     type: [String],
     required: false
   },
+  category: {
+    type: String,
+    default: 'Uncategorized'
+  },
   code: {
     type: String,
     required: true

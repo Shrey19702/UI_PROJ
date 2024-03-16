@@ -7,7 +7,9 @@ import Root, { loader as rootLoader } from "./components/Root"
 import ErrorPage from "./components/ErrorPage"
 import ComponentViewer, {loader as componentLoader} from "./components/ComponentViewer"
 import ComponentsPage, {loader as allComponentsLoader} from "./components/ComponentsPage"
+import ComponentsEditor, {loader as componentEditor} from "./components/ComponentEditor"
 import PostComponents from "./components/PostComponents";
+import SearchPage from "./components/SearchPage";
 import Landing from "./components/Landing";
 
 
@@ -39,11 +41,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/search",
-        element: <PostComponents />
+        element: <SearchPage />
       },
       {
-        path: "/categories",
-        element: <PostComponents />
+        path: "/Edit/:comp_Id",
+        element: <ComponentsEditor />,
+        loader: componentEditor
       }     
 
     ],

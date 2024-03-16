@@ -102,4 +102,4 @@ def root():
     return f" connected to DB on URI {app.config['SQLALCHEMY_DATABASE_URI']} "
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)

@@ -17,7 +17,7 @@ export default function Navbar() {
         if(location){
             if(location.pathname === '/')
                 setselect("Home")
-            else if(location.pathname === '/components')
+            else if(location.pathname === '/components' || location.pathname.includes('/component/'))
                 setselect("Components")
             else if(location.pathname === '/create')
                 setselect("Create")
