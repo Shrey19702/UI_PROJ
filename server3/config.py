@@ -8,3 +8,5 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@localhost:5432/vector-
 
 # Optional: Disable SQLAlchemy modification tracking
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+VIEW_URL = 'http://localhost:3000'

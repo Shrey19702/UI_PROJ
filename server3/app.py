@@ -1,15 +1,19 @@
 from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from models import db, Embedding
 import  numpy as np
 import faiss
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+CORS(app)
 
 db.init_app(app) 
 app.app_context().push()
+db.create_all()
+
 print("Connected to database [postgres] ")
 # with app.app_context():
 #     db.create_all()
@@ -48,8 +52,11 @@ index = build_faiss_index()
 
 # ----> ROUTES
 
-@app.route('/recommend', methods=['POST'])
+@app.route('/recommend', methods=['POST', 'OPTIONS'])
 def recommend():
+    if (request.method == 'OPTIONS'):
+        return '', 200
+    
     query_prompt = request.json['prompt']
 
     k=10
@@ -61,20 +68,22 @@ def recommend():
     distances, indices = index.search(np.array(query_embedding), k)
 
     # Retrieve embeddings for recommended items using the mapping
-    recommended_embeddings = [Embedding.query.filter(Embedding.id == idx_pk_map[idx]).with_entities(Embedding.name).first() for idx in indices[0]]
+    recommended_embeddings = [Embedding.query.filter(Embedding.id == idx_pk_map[idx]).with_entities(Embedding.mongo_id, Embedding.name).first() for idx in indices[0]]
 
     recommendations = [] 
     for emb, dist in zip(recommended_embeddings, distances[0]):
         # print(emb)
-        recommendations.append({'name': emb[0], 'distance': str(dist)})
+        recommendations.append({'mongo_id': emb[0], 'name': emb[1], 'distance': str(dist)})
     
     # print(recommendations)
-    return jsonify(recommendations)
+    return jsonify({'success': True ,'data': recommendations}), 201
 
 
 @app.route('/create-embeddings', methods=['POST'])
 def create_embedding():
     data = request.json
+
+    print(data['name'], data['mongo_id'])
 
     if 'mongo_id' not in data or 'tags' not in data or 'name' not in data:
         return jsonify({'status':' error', 'message': ' Error: 400 Missing text or embedding in request body'}), 400
@@ -94,7 +103,7 @@ def create_embedding():
 
     index.add(embedding)
 
-    return jsonify({'status': 'Success', 'message': 'Embedding created successfully'}), 201
+    return jsonify({'success': True, 'message': 'Embedding created successfully'}), 201
 
 
 @app.route('/')

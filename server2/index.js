@@ -88,6 +88,37 @@ const db_check = function(res){
         return true;
 }
 
+//save to embeddings db
+const save_embeddings = async (element)=>{
+
+    try{
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                mongo_id: element._id,
+                name: element.name, 
+                tags: [element.category, element.type, ...element.tags]
+            })
+        } 
+        const py_res = await fetch(`http://localhost:5001/create-embeddings`, options);
+        const json_res = await py_res.json();
+        console.log(json_res.message);
+
+        if(json_res.success){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    catch(err){
+        console.error('Error in saving to embeddings DB: ', err);
+    }
+}
+
 //return all elements
 app.get('/get-all-elements', async (req, res) => {
     
@@ -112,6 +143,7 @@ app.get('/get-all-elements', async (req, res) => {
     }
 })
 
+//Elements categorised by thier categories
 app.get('/get-elements-by-category', async (req, res)=>{
     let db_conn = db_check(res)
     if(!db_conn) 
@@ -130,6 +162,28 @@ app.get('/get-elements-by-category', async (req, res)=>{
     }
     catch(err){
         console.log('error in fetching elements :', err)
+        res.status(500).json({
+            success: false,
+            message: "500: internal server error :- " + err
+        })
+    }
+})
+
+//Name of all Categories
+app.get('/get-all-categories', async (req, res)=>{
+    let db_conn = db_check(res)
+    if(!db_conn) 
+        return;
+    
+    try{
+        const categories = await Element.distinct('category');
+        res.status(200).json({
+            success: true,
+            data: categories,
+        })
+    }
+    catch(err){
+        console.log('error in fetching categories :', err)
         res.status(500).json({
             success: false,
             message: "500: internal server error :- " + err
@@ -200,7 +254,12 @@ app.post('/api/create-element', async (req, res) => {
         })
         const savedElement = await newElement.save();
 
-        console.log(savedElement);
+        // console.log(savedElement);
+        //create embeddings
+        const emb_saved = save_embeddings(savedElement)
+        if(!emb_saved)
+            throw "Error in saving to Embeddings DB"
+        
 
         res.status(201).json({
             success: true,
@@ -237,6 +296,11 @@ app.post('/api/update-element/:id', async (req, res) => {
         ele.category = data.category;
 
         const savedElement = await ele.save();
+
+        //update embeddings
+        const emb_saved = save_embeddings(savedElement)
+        if(!emb_saved)
+            throw "Error in saving to Embeddings DB"
 
         res.status(201).json({
             success: true,
@@ -278,7 +342,34 @@ app.delete('/api/delete/:id', async (req, res) => {
     }
 })
 
+
+
+// SEARCH API
+// app.get('search/:prompt', async (req,res)=>{
+//     let db_conn = db_check(res);
+//     if(!db_conn)
+//         return;
+
+//     try{
+//         // 1. prompt server 3
+//         // 2. get data for the returned ids
+//         // 3. send
+//         const py_res = await fetch(`http://localhost:5051/search/${prompt}`)
+//         const json_res = await py_res.json();
+
+//         console.log(json_res);
+//     }
+//     catch(err){
+//         console.log('error in searching :', err)
+//         res.status(500).json({
+//             success: false,
+//             message: '500: internal server error :- ' + err
+//         })
+//     }
+// })
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-});
+});    

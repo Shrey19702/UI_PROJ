@@ -1,5 +1,17 @@
+import { get_all_categories } from "../api_calls";
 import ComponentTypes from "./ComponentTypes";
+
+import { useLoaderData } from "react-router-dom";
+
+export async function loader() {
+    const category_data = await get_all_categories();
+    return { category_data };
+}
+
 function Landing() {
+
+    const { category_data } = useLoaderData();
+
     return (
         <>
             <div className="relative text-white w-full h-screen px-10 ">
@@ -14,7 +26,7 @@ function Landing() {
                 <div className=" absolute left-0 top-0 w-2/3 h-[100vh] bg-gradient-to-r from-blue-400/20  to-black/5  " />
                 <div className=" absolute left-0 top-0 w-full h-[100vh] bg-gradient-to-t from-red-900/20  to-black/5 " />
             </div>
-            <ComponentTypes/>
+            <ComponentTypes category_data={category_data} />
         </>
     );
 }

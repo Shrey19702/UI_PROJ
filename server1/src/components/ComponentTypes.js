@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Card({ name }) {
+function Card({name }) {
     const [val, setval] = useState([0, 0]);
 
     const handleMove = (e) => {
@@ -32,7 +32,8 @@ function Card({ name }) {
     )
 }
 
-function ComponentTypes() {
+function ComponentTypes({category_data}) {
+
     return (
         <>
             <div className=" bg-black/70 min-h-screen text-slate-200 px-6 py-24 relative overflow-hidden">
@@ -54,8 +55,12 @@ function ComponentTypes() {
                 </div>
 
                 <div className=" flex py-10 gap-10 flex-wrap items-center justify-evenly font-medium text-2xl">
-                    <Card name={"Navbars"} />
-                    <Card name={"Sidebars"} />
+                    {
+                        category_data.map((val, idx)=>(
+                            <Card key={idx} name={val} />
+                        ))
+                    }
+                    {/* <Card name={"Sidebars"} />
                     <Card name={"Tables"} />
                     <Card name={"Forms"} />
                     <Card name={"Headings"} />
@@ -76,7 +81,7 @@ function ComponentTypes() {
                     <Card name={"Alerts"} />
 
                     <Card name={"404 Pages"} />
-                    <Card name={"banners"} />
+                    <Card name={"banners"} /> */}
 
 
                 </div>

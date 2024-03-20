@@ -10,7 +10,7 @@ import ComponentsPage, {loader as allComponentsLoader} from "./components/Compon
 import ComponentsEditor, {loader as componentEditor} from "./components/ComponentEditor"
 import PostComponents from "./components/PostComponents";
 import SearchPage from "./components/SearchPage";
-import Landing from "./components/Landing";
+import Landing, {loader as CategoryLoader} from "./components/Landing";
 
 
 const router = createBrowserRouter([
@@ -23,7 +23,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landing />
+        element: <Landing />,
+        loader: CategoryLoader,
       },
       {
         path: "component/:comp_Id",
