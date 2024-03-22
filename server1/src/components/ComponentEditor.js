@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { get_component } from "../api_calls";
+import { get_component, update_component } from "../api_calls";
 import { useState } from 'react'
 
 export async function loader({ params }) {
@@ -19,37 +19,23 @@ export default function ComponentsEditor() {
     const [name, setname] = useState(comp_data.data.name);
     const [type, settype] = useState(comp_data.data.type);
     const [code, setcode] = useState(comp_data.data.code);
-    const [category, setcategory] = useState(comp_data.data.category===null ? 'Uncategorised' : comp_data.data.category);
-    
+    const [category, setcategory] = useState(comp_data.data.category === null ? 'Uncategorised' : comp_data.data.category);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const url = `http://localhost:5000/api/update-element/${comp_data.data._id}`
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    type: type, 
-                    tags: tags,
-                    code: code,
-                    category: category
-                })
-            } 
-            const response = await fetch(url , options);
-            const responseData = await response.json();
-            if(responseData.success){
-                alert('Updated Sucessfully');
-            }
-            else{
-                alert('Error Occured: '+responseData.message);
-                console.error('Error: '+responseData.message);
-            }
+        try {
+            const data = {
+                name: name,
+                type: type,
+                tags: tags,
+                code: code,
+                category: category
+            };
+
+            await update_component(data, comp_data.data._id);
         }
-        catch(err){
-            console.error('Error: '+err);
+        catch (err) {
+            console.error('Error: ' + err);
         }
     }
 
