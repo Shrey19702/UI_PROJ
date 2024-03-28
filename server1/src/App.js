@@ -45,7 +45,7 @@ const router = createBrowserRouter([
         element: <SearchPage />
       },
       {
-        path: "/Edit/:comp_Id",
+        path: "/edit/:comp_Id",
         element: <ComponentsEditor />,
         loader: componentEditor
       }     

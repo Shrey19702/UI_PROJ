@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { create_component } from '../api_calls';
 
 export default function PostComponents() {
     const [tag_input, settag_input] = useState('');
@@ -12,29 +13,16 @@ export default function PostComponents() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            const url = "http://localhost:5000/api/create-element"
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    type: type, 
-                    tags: tags,
-                    code: code,
-                    category: category
-                })
-            } 
-            const response = await fetch(url , options);
-            const responseData = await response.json();
-            if(responseData.success){
-                alert('Submitted Sucessfully');
-            }
-            else{
-                alert('Error Occured: '+responseData.message);
-                console.error('Error: '+responseData.message);
-            }
+
+            const data = {
+                name: name,
+                type: type, 
+                tags: tags,
+                code: code,
+                category: category
+            };
+
+            await create_component(data);
         }
         catch(err){
             console.error('Error: '+err);

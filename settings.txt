@@ -1,0 +1,14 @@
+/api-n/---   : NODE APIS
+/api-p/---   : PYTHON APIS
+
+URLS:
+
+1. ROOT /
+2. EDIT /edit/:id
+3. CREATE /create
+4. COMPONENTS /components
+5. COMPONENT /component/:id
+6. SEARCH /search
+
+Enter pass phrase for myCA.key: UI_PROJ
+

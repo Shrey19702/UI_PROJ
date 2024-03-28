@@ -25,8 +25,6 @@ export default function ComponentViewer() {
     const { comp_data } = useLoaderData();
     const [exp, setexp] = useState(false);
 
-    // console.log(comp_data)
-
     return (
         <div className=" pt-24 pb-16 px-10 bg-gradient-to-t from-sky-400/50 via-90% via-sky-50/50 ">
             <div className=" relative overflow-hidden rounded-md my-5   bg-sky-100/40 ">
@@ -78,7 +76,7 @@ export default function ComponentViewer() {
                         <iframe
                             title={`component-${comp_data.id}`}
                             className=" w-full h-full rounded-md shadow-2xl bg-white"
-                            src={comp_data.link}
+                            src={`${process.env.REACT_APP_EXPRESS_API_URI}${comp_data.link}`}
                         />
                     </ResizableBox>
 

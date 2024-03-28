@@ -4,7 +4,12 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Define the SQLAlchemy database URI
-SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@localhost:5432/vector-embeddings'
+POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
+POSTGRES_PASS = os.environ.get('POSTGRES_PASSWORD', 'password')
+POSTGRES_CONN = os.environ.get('POSTGRES_CONN', 'localhost')
+
+
+SQLALCHEMY_DATABASE_URI = f'postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_CONN}:5432/vector-embeddings'
 
 # Optional: Disable SQLAlchemy modification tracking
 SQLALCHEMY_TRACK_MODIFICATIONS = False

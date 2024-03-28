@@ -1,5 +1,6 @@
 version: '3.1'
 services:
+
  mongo-db:
   image: mongo
   ports:
@@ -23,6 +24,8 @@ services:
   networks:
    - private
    - public
+  depends_on:
+   - mongo-db
 
  sql-db:
   image: postgres
@@ -39,14 +42,54 @@ services:
    - private
 
  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    networks:
-     - private
-     - public
+  image: adminer
+  restart: always
+  ports:
+   - 8080:8080
+  networks:
+   - private
+   - public
 
+ python-server: 
+  image: py-server
+  restart: always
+  ports:
+   - 5001:5001
+  networks:
+   - private
+  depends_on: 
+   - sql-db
+
+ node-server: 
+  image: express-server
+  restart: always
+  ports:
+   - 5000:5000
+  environment:
+   - MONGO_USER=root
+   - MONGO_PASS=password
+   - MONGO_SERVER=mongo-db
+   - PY_SERVER_URI=http://python-server:5001/
+  networks:
+   - private
+  depends_on: 
+   - mongo-db
+
+ view-server:
+  image: react-server
+  restart: always
+  ports:
+   - 80:80
+  environment:
+   - REACT_APP_BASE_URL=http://localhost:8000/
+  
+  networks:
+   - private
+   - public 
+  depends_on: 
+   - node-server
+   - python-server
+    
 networks:
  public:
  private:

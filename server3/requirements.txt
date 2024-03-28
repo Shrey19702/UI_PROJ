@@ -1,0 +1,12 @@
+faiss-cpu==1.8.0
+
+Flask==3.0.2
+Flask-Cors==4.0.0
+
+SQLAlchemy==2.0.29
+Flask-SQLAlchemy==3.1.1
+
+sentence-transformers==2.*
+torch==1.12.*
+transformers==4.*
+psycopg2-binary==2.9.9

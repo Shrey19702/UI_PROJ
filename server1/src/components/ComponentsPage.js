@@ -1,6 +1,5 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { get_all_components_by_categories } from "../api_calls";
-
 import { useEffect } from "react";
 
 export async function loader() {
@@ -44,7 +43,7 @@ export default function ComponentsPage() {
                             <div className="flex flex-col gap-16">
                                 {
                                     val.elements.map((ele, id) => (
-                                        <Link key={id} to={`http://localhost:3000/component/${ele._id}`}>
+                                        <Link key={id} to={`/component/${ele._id}`}>
 
                                             <div className="relative overflow-hidden group bg-stone-900/80 hover:bg-slate-900/80 p-5 pb-10 rounded-md shadow-xl hover:shadow-2xl transition-all duration-700" >
                                                 {/* <div>

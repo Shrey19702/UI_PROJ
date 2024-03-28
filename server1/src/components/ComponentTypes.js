@@ -55,35 +55,15 @@ function ComponentTypes({category_data}) {
                 </div>
 
                 <div className=" flex py-10 gap-10 flex-wrap items-center justify-evenly font-medium text-2xl">
-                    {
+                    {   typeof(category_data)!=='object' || (typeof(category_data)==='object' && category_data.length===0) ? 
+                        <div className=" text-center text-3xl font-bold ">
+                            NO CATEGORIES
+                        </div>
+                        :
                         category_data.map((val, idx)=>(
                             <Card key={idx} name={val} />
                         ))
                     }
-                    {/* <Card name={"Sidebars"} />
-                    <Card name={"Tables"} />
-                    <Card name={"Forms"} />
-                    <Card name={"Headings"} />
-                    <Card name={"Footers"} />
-
-                    <Card name={"Reviews"} />
-                    <Card name={"Carts"} />
-                    <Card name={"Buttons"} />
-                    <Card name={"Dropdowns"} />
-                    <Card name={"Combobox"} />
-
-                    <Card name={"Notifications"} />
-                    <Card name={"Dialogs"} />
-
-                    <Card name={"Breadcrumbs"} />
-                    <Card name={"Tabs"} />
-                    <Card name={"Pagination"} />
-                    <Card name={"Alerts"} />
-
-                    <Card name={"404 Pages"} />
-                    <Card name={"banners"} /> */}
-
-
                 </div>
             </div>
 

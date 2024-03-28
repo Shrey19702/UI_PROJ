@@ -1,3 +1,4 @@
+// IMPORTED LIBRARIES
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -5,6 +6,7 @@ const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
+//IMPORTED FILES
 const get_file = require('./files.js');
 const Element = require('./schema.js');
 
@@ -19,7 +21,7 @@ app.use(
 app.use(cors());
 
 // MONGOOSE CONNECTION TO MONGODB
-mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@localhost:27017`)
+mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_SERVER}:27017`)
     .then(() => {
         console.log('MongoDB connected');
     })
@@ -29,9 +31,12 @@ mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@
 
 // ROUTES:-   1. JS  |  2. React
 
-app.get('/js/:id', async (req, res) => {
+app.get('/file/js/:id', async (req, res) => {
     const id = req.params.id;
     try {
+        if (mongoose.connection.readyState !== 1) {
+            throw "NOT CONNECTED TO DB"
+        }
         const db_response = await Element.findOne({ _id: id }).select('code');
         const data = db_response.code;
         let file = '';
@@ -51,9 +56,12 @@ app.get('/js/:id', async (req, res) => {
     }
 });
 
-app.get('/react/:id', async (req, res) => {
+app.get('/file/react/:id', async (req, res) => {
     const id = req.params.id;
     try {
+        if (mongoose.connection.readyState !== 1) {
+            throw "NOT CONNECTED TO DB"
+        }
         const db_response = await Element.findOne({ _id: id }).select('code');
         const data = db_response.code;
         let file = '';
@@ -103,7 +111,7 @@ const save_embeddings = async (element)=>{
                 tags: [element.category, element.type, ...element.tags]
             })
         } 
-        const py_res = await fetch(`http://localhost:5001/create-embeddings`, options);
+        const py_res = await fetch(`${process.env.PY_SERVER_URI}/create-embeddings`, options);
         const json_res = await py_res.json();
         console.log(json_res.message);
 
@@ -120,7 +128,7 @@ const save_embeddings = async (element)=>{
 }
 
 //return all elements
-app.get('/get-all-elements', async (req, res) => {
+app.get('/api-n/get-all-elements', async (req, res) => {
     
     let db_conn = db_check(res)
     if(!db_conn) 
@@ -144,7 +152,7 @@ app.get('/get-all-elements', async (req, res) => {
 })
 
 //Elements categorised by thier categories
-app.get('/get-elements-by-category', async (req, res)=>{
+app.get('/api-n/get-elements-by-category', async (req, res)=>{
     let db_conn = db_check(res)
     if(!db_conn) 
         return;
@@ -170,7 +178,7 @@ app.get('/get-elements-by-category', async (req, res)=>{
 })
 
 //Name of all Categories
-app.get('/get-all-categories', async (req, res)=>{
+app.get('/api-n/get-all-categories', async (req, res)=>{
     let db_conn = db_check(res)
     if(!db_conn) 
         return;
@@ -200,7 +208,7 @@ app.get('/get-all-categories', async (req, res)=>{
 // fetch as text data from mongoDB using idsx`
 
 //GET ELEMENT BY ID
-app.get('/api/get-element/:id', async (req, res) => {
+app.get('/api-n/get-element/:id', async (req, res) => {
     const id = req.params.id;
     
     let db_conn = db_check(res)
@@ -219,7 +227,7 @@ app.get('/api/get-element/:id', async (req, res) => {
         res.status(200).json({
             success: true,
             data: element,
-            link: `http://localhost:5000/${element.type.toLowerCase()}/${element._id.toString()}`
+            link: `/file/${element.type.toLowerCase()}/${element._id.toString()}`
         })
     }
     catch (err) {
@@ -236,7 +244,7 @@ app.get('/api/get-element/:id', async (req, res) => {
 });
 
 //SAVE A NEW ELEMENT
-app.post('/api/create-element', async (req, res) => {
+app.post('/api-n/create-element', async (req, res) => {
 
     let db_conn = db_check(res)
     if(!db_conn) 
@@ -254,13 +262,11 @@ app.post('/api/create-element', async (req, res) => {
         })
         const savedElement = await newElement.save();
 
-        // console.log(savedElement);
         //create embeddings
         const emb_saved = save_embeddings(savedElement)
         if(!emb_saved)
             throw "Error in saving to Embeddings DB"
         
-
         res.status(201).json({
             success: true,
             message: 'element posted',
@@ -277,7 +283,7 @@ app.post('/api/create-element', async (req, res) => {
 });
 
 //UPDATE A ELEMENT
-app.post('/api/update-element/:id', async (req, res) => {
+app.post('/api-n/update-element/:id', async (req, res) => {
 
     let db_conn = db_check(res)
     if(!db_conn) 
@@ -318,7 +324,7 @@ app.post('/api/update-element/:id', async (req, res) => {
 });
 
 //DELETE A ELEMENT
-app.delete('/api/delete/:id', async (req, res) => {
+app.delete('/api-n/delete/:id', async (req, res) => {
     
     let db_conn = db_check(res)
     if(!db_conn) 
