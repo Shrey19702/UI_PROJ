@@ -54,7 +54,7 @@ export default function ComponentViewer() {
             <div className=" py-10 px-10 min-h-96 ">
                 <div className="  rounded-md   ">
                     <ResizableBox
-                        width={1300} height={500}
+                        width={1300} height={650}
 
                         minConstraints={[340, 100]}
                         axis="x"
@@ -76,7 +76,7 @@ export default function ComponentViewer() {
                         <iframe
                             title={`component-${comp_data.id}`}
                             className=" w-full h-full rounded-md shadow-2xl bg-white"
-                            src={`${process.env.REACT_APP_EXPRESS_API_URI}${comp_data.link}`}
+                            src={`${process.env.REACT_APP_BASE_URL}${comp_data.link}`}
                         />
                     </ResizableBox>
 

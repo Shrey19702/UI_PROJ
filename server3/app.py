@@ -42,10 +42,11 @@ model = SentenceTransformer('thenlper/gte-small')
 
 # FAISS KNN MODEL  ref --> https://unfoldai.com/effortless-large-scale-image-retrieval-with-faiss-a-hands-on-tutorial/
 d = 384 # diemnsions of each vector
-m = 8 # number of subquantizers
-nlist = 1 #number of clusters
-quantizer = faiss.IndexFlatL2(d)
-index = faiss.IndexIVFPQ(quantizer, d, nlist, m, 8) # 8 bits per quantisizers
+# m = 8 # number of subquantizers
+# nlist = 1 #number of clusters
+# quantizer = faiss.IndexFlatL2(d)
+# index = faiss.IndexIVFPQ(quantizer, d, nlist, m, 8) # 8 bits per quantisizers
+index = faiss.IndexFlatL2(d)
 
 # CURRENT IDX AND MAPPING OF FAISS IDX TO POSTGRES IDS 
 last_idx = int(0)
@@ -67,9 +68,10 @@ def build_faiss_index():
             embedding_array = np.array(np.frombuffer(embedding[0], dtype=np.float32)).reshape(-1, d)
             # embedding_array = embedding_array.reshape(-1, 384)
             # MAP THE SQL-ID (embedding[1]) TO FAISS ID (current last_idx) 
+
             idx_pk_map[last_idx] = embedding[1] #idx -> pk
             last_idx += 1
-            index.train(embedding_array)
+            # index.train(embedding_array)
             index.add(embedding_array)
 
 # CREATE THE SEARCH SYSTEM
@@ -89,16 +91,25 @@ def recommend():
     
     # SEARCH PROMPT
     query_prompt = request.json['prompt']
-    k=10
+    k=6
     if(request.json['k']):
         k = request.json['k']
+
     query_embedding = model.encode([query_prompt])
 
     # Search for nearest neighbors (distance indices)
     _, indices = index.search(np.array(query_embedding), k)
 
     # Retrieve embeddings for recommended items using the mapping
-    recommended_embeddings = [Embedding.query.filter(Embedding.id == idx_pk_map[idx]).with_entities(Embedding.mongo_id, Embedding.name).first() for idx in indices[0]]
+    recommended_embeddings = []
+
+    if(len(idx_pk_map)<k):
+        for key in idx_pk_map.keys():
+            recommended_embeddings.append(Embedding.query.filter(Embedding.id == idx_pk_map[key]).with_entities(Embedding.mongo_id, Embedding.name).first())
+    else:
+        for idx in indices[0]:
+            recommended_embeddings.append(Embedding.query.filter(Embedding.id == idx_pk_map[idx]).with_entities(Embedding.mongo_id, Embedding.name).first())
+        
 
     recommendations = [] 
     for emb in recommended_embeddings :
@@ -141,8 +152,11 @@ def create_embedding():
     db.session.add(new_embedding)
     db.session.commit()
 
-    index.train(emb_normalized)
+    # index.train(emb_normalized)
     index.add(emb_normalized)
+
+    idx_pk_map[last_idx] = new_embedding[1] #idx -> pk
+    last_idx += 1
 
     return jsonify({'success': True, 'message': 'Embedding created successfully'}), 201
 

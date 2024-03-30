@@ -62,7 +62,6 @@ export const get_all_components = async function () {
 }
 
 export const get_all_categories = async function () {
-    console.log(process.env.FLASK_API_URI);
     try {
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api-n/get-all-categories/`);
         const json_res = await response.json();

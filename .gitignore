@@ -11,6 +11,9 @@ py-server.tar
 venv/
 .env/
 node_modules
+build/
+build
+/build
 
 Lib
 Include
@@ -26,7 +29,6 @@ __pycache__
 /coverage
 
 # production
-/build
 
 # misc
 .DS_Store

@@ -111,7 +111,7 @@ const save_embeddings = async (element)=>{
                 tags: [element.category, element.type, ...element.tags]
             })
         } 
-        const py_res = await fetch(`${process.env.PY_SERVER_URI}/create-embeddings`, options);
+        const py_res = await fetch(`${process.env.PY_SERVER_URI}/api-p/create-embeddings`, options);
         const json_res = await py_res.json();
         console.log(json_res.message);
 

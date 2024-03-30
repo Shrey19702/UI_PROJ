@@ -12,3 +12,10 @@ URLS:
 
 Enter pass phrase for myCA.key: UI_PROJ
 
+
+future prospects:
+
+1. add trending with analysisng clicks and copied codes
+2. user login and saving with users own trending
+3. add a good code editor with direct ui view
+
