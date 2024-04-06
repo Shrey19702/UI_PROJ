@@ -8,7 +8,9 @@ require('dotenv').config();
 
 //IMPORTED FILES
 const get_file = require('./files.js');
-const Element = require('./schema.js');
+const Element = require('./schemas/elements.js');
+const Views = require('./schemas/views.js');
+
 
 const app = express();
 
@@ -47,6 +49,12 @@ app.get('/file/js/:id', async (req, res) => {
         else {
             file = get_file.get_not_found();
         }
+
+        // increment views of this element
+        const ele_view = await Views.findOne({element: id});
+        ele_view.views += 1;
+        await ele_view.save();
+
         res.send(file);
     }
     catch (err) {
@@ -65,13 +73,19 @@ app.get('/file/react/:id', async (req, res) => {
         const db_response = await Element.findOne({ _id: id }).select('code');
         const data = db_response.code;
         let file = '';
-
+        
         if (data) {
             file = get_file.get_react_file(data);
         }
         else {
             file = get_file.get_not_found();
         }
+
+        // increment views of this element
+        const ele_view = await Views.findOne({element: id});
+        ele_view.views += 1;
+        await ele_view.save();
+
         res.send(file);
     }
     catch (err) {
@@ -82,7 +96,7 @@ app.get('/file/react/:id', async (req, res) => {
 });
 
 // Check if connected to db for APIs
-const db_check = function(res){
+const db_check = function (res) {
 
     if (mongoose.connection.readyState !== 1) {
         console.log('Not connected to db ')
@@ -97,9 +111,9 @@ const db_check = function(res){
 }
 
 //save to embeddings db
-const save_embeddings = async (element)=>{
+const save_embeddings = async (element) => {
 
-    try{
+    try {
         const options = {
             method: 'POST',
             headers: {
@@ -107,34 +121,34 @@ const save_embeddings = async (element)=>{
             },
             body: JSON.stringify({
                 mongo_id: element._id,
-                name: element.name, 
+                name: element.name,
                 tags: [element.category, element.type, ...element.tags]
             })
-        } 
+        }
         const py_res = await fetch(`${process.env.PY_SERVER_URI}/api-p/create-embeddings`, options);
         const json_res = await py_res.json();
         console.log(json_res.message);
 
-        if(json_res.success){
+        if (json_res.success) {
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
-    catch(err){
+    catch (err) {
         console.error('Error in saving to embeddings DB: ', err);
     }
 }
 
 //return all elements
 app.get('/api-n/get-all-elements', async (req, res) => {
-    
+
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
-    
-    try{
+
+    try {
         const elements = await Element.find({});
         res.status(200).json({
             success: true,
@@ -142,7 +156,7 @@ app.get('/api-n/get-all-elements', async (req, res) => {
             // link: `http://localhost:5000/${element.type.toLowerCase()}/${element._id.toString()}`
         })
     }
-    catch(err){
+    catch (err) {
         console.log('error in fetching elements :', err)
         res.status(500).json({
             success: false,
@@ -152,23 +166,23 @@ app.get('/api-n/get-all-elements', async (req, res) => {
 })
 
 //Elements categorised by thier categories
-app.get('/api-n/get-elements-by-category', async (req, res)=>{
+app.get('/api-n/get-elements-by-category', async (req, res) => {
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
-    
-    try{
+
+    try {
         const elementsByCategory = await Element.aggregate([
             // Group documents by category
             { $group: { _id: '$category', elements: { $push: '$$ROOT' } } }
         ]);
-        
+
         res.status(200).json({
             success: true,
             data: elementsByCategory,
         })
     }
-    catch(err){
+    catch (err) {
         console.log('error in fetching elements :', err)
         res.status(500).json({
             success: false,
@@ -178,19 +192,19 @@ app.get('/api-n/get-elements-by-category', async (req, res)=>{
 })
 
 //Name of all Categories
-app.get('/api-n/get-all-categories', async (req, res)=>{
+app.get('/api-n/get-all-categories', async (req, res) => {
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
-    
-    try{
+
+    try {
         const categories = await Element.distinct('category');
         res.status(200).json({
             success: true,
             data: categories,
         })
     }
-    catch(err){
+    catch (err) {
         console.log('error in fetching categories :', err)
         res.status(500).json({
             success: false,
@@ -210,9 +224,9 @@ app.get('/api-n/get-all-categories', async (req, res)=>{
 //GET ELEMENT BY ID
 app.get('/api-n/get-element/:id', async (req, res) => {
     const id = req.params.id;
-    
+
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
 
     try {
@@ -247,7 +261,7 @@ app.get('/api-n/get-element/:id', async (req, res) => {
 app.post('/api-n/create-element', async (req, res) => {
 
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
 
     try {
@@ -258,15 +272,20 @@ app.post('/api-n/create-element', async (req, res) => {
             type: data.type, //js html or react component
             tags: data.tags, //tags of the element for recomender
             code: data.code, //the code for element in text format 
-            category : data.category
+            category: data.category
         })
         const savedElement = await newElement.save();
 
+        const newView = new Views({
+            element: savedElement._id
+        })
+        const savedView = await newView.save();
+
         //create embeddings
         const emb_saved = save_embeddings(savedElement)
-        if(!emb_saved)
+        if (!emb_saved)
             throw "Error in saving to Embeddings DB"
-        
+
         res.status(201).json({
             success: true,
             message: 'element posted',
@@ -286,7 +305,7 @@ app.post('/api-n/create-element', async (req, res) => {
 app.post('/api-n/update-element/:id', async (req, res) => {
 
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
 
     try {
@@ -305,7 +324,7 @@ app.post('/api-n/update-element/:id', async (req, res) => {
 
         //update embeddings
         const emb_saved = save_embeddings(savedElement)
-        if(!emb_saved)
+        if (!emb_saved)
             throw "Error in saving to Embeddings DB"
 
         res.status(201).json({
@@ -325,9 +344,9 @@ app.post('/api-n/update-element/:id', async (req, res) => {
 
 //DELETE A ELEMENT
 app.delete('/api-n/delete/:id', async (req, res) => {
-    
+
     let db_conn = db_check(res)
-    if(!db_conn) 
+    if (!db_conn)
         return;
 
     try {
@@ -348,6 +367,34 @@ app.delete('/api-n/delete/:id', async (req, res) => {
     }
 })
 
+//GET TRENDING
+app.get('/api-n/trending/:k', async (req, res) => {
+    let db_conn = db_check(res)
+    if (!db_conn)
+        return;
+
+    try {
+        //number of elements to show
+        const k = req.params.k;
+
+        const TrendingElements = await Views.find()
+            .populate('element')
+            .sort({ views: -1 }) // Sort by views in descending order
+            .limit(k); // Limit to top k elements
+
+        res.status(200).json({
+            success: true,
+            data: TrendingElements
+        });
+    } 
+    catch (err) {
+        console.err('error in getting trending elements :', err)
+        res.status(500).json({
+            success: false,
+            message: '500: internal server error :- ' + err
+        })
+    }
+})
 
 
 // SEARCH API

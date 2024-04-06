@@ -39,7 +39,7 @@ export default function PostComponents() {
                         <div className="text-xl font-light">Element Name</div>
                         <input
                             required name="name" type="text"
-                            className=" text-black outline-none p-2 rounded-sm w-96"
+                            className=" text-black outline-none p-2 rounded-sm sm:w-96"
                             placeholder="NAME" value={name}
                             onChange={(e) => { setname(e.target.value) }}
                         />
@@ -109,7 +109,7 @@ export default function PostComponents() {
                         <div className="text-xl font-light">Element Category</div>
                         <input
                             required name="name" type="text"
-                            className=" text-black outline-none p-2 rounded-sm w-96"
+                            className=" text-black outline-none p-2 rounded-sm sm:w-96"
                             placeholder="Category" value={category}
                             onChange={(e) => { setcategory(e.target.value) }}
                         />

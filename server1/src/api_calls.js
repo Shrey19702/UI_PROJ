@@ -168,3 +168,23 @@ export const create_component = async (data)=>{
         return err
     }
 }
+
+export const get_trending_component = async (k=6)=>{
+    try {
+        // const k = 6;
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api-n/trending/${k}`);
+        const json_res = await response.json();
+
+        // console.log(json_res);
+        if (json_res.success) {
+            return json_res.data;
+        }
+        else {
+            console.error(json_res.message)
+            return [];
+        }
+    }
+    catch (err) {
+        console.error('error in fetching trending elements')
+    }
+}

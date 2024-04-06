@@ -1,0 +1,98 @@
+version: '3.1'
+services:
+
+ mongo-db:
+  image: mongo
+  ports:
+   - 27017:27017
+  environment:
+   MONGO_INITDB_ROOT_USERNAME: "root"
+   MONGO_INITDB_ROOT_PASSWORD: "password"
+  volumes:
+   - mongo-vol:/data/db
+  networks:
+   - private
+
+ mongo-express:
+  image: mongo-express
+  ports:
+   - 8081:8081
+  environment: 
+   ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
+   ME_CONFIG_BASICAUTH_USERNAME: "root" 
+   ME_CONFIG_BASICAUTH_PASSWORD: "password" 
+  networks:
+   - private
+   - public
+  depends_on:
+   - mongo-db
+
+ sql-db:
+  image: postgres
+  restart: always
+  shm_size: 128mb
+  ports:
+   - 5432:5432
+  environment:
+   POSTGRES_PASSWORD: password
+   POSTGRES_DB: vector-embeddings
+  volumes:
+      - postgres-vol:/var/lib/postgresql/data
+  networks:
+   - private
+
+ adminer:
+  image: adminer
+  restart: always
+  ports:
+   - 8080:8080
+  networks:
+   - private
+   - public
+
+#  python-server: 
+#   image: py-server
+#   restart: always
+#   ports:
+#    - 5001:5001
+#   networks:
+#    - private
+#   depends_on: 
+#    - sql-db
+
+#  node-server: 
+#   image: express-server
+#   restart: always
+#   ports:
+#    - 5000:5000
+#   environment:
+#    - MONGO_USER=root
+#    - MONGO_PASS=password
+#    - MONGO_SERVER=mongo-db
+#    - PY_SERVER_URI=http://python-server:5001/
+#   networks:
+#    - private
+#   depends_on: 
+#    - mongo-db
+
+#  view-server:
+#   image: react-local-server
+#   restart: always
+#   ports:
+#    - 8000:80
+#   environment:
+#    - REACT_APP_BASE_URL=http://localhost:8000
+  
+#   networks:
+#    - private
+#    - public 
+#   depends_on: 
+#    - node-server
+#    - python-server
+    
+networks:
+ public:
+ private:
+volumes:
+ postgres-vol:
+ mongo-vol:

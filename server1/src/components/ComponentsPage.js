@@ -34,7 +34,7 @@ export default function ComponentsPage() {
                 {
                     comps_data.map((val, idx) => (
 
-                        <div id={val._id} key={idx} className=" px-16 mx-16 py-10 flex flex-col gap-10 bg-gradient-to-tr from-fuchsia-700/70 to-orange-600/70 rounded-xl ">
+                        <div id={val._id} key={idx} className=" px-8 sm:px-16 sm:mx-16 py-10 flex flex-col gap-10 bg-gradient-to-tr from-fuchsia-700/70 to-orange-600/70 rounded-xl ">
                             {/* CATEGORY NAME */}
                             <div className="text-3xl font-light">
                                 {val._id}
@@ -58,9 +58,9 @@ export default function ComponentsPage() {
                                                     {ele.type === "REACT" ? "REACT" : "HTML"}
                                                 </div>
                                                 {/* TAGS */}
-                                                <div className="flex gap-5 pt-4">
+                                                <div className="flex gap-5 pt-4 flex-wrap">
                                                     {ele.tags.map((tag, idx) => (
-                                                        <div key={idx} className=" z-10 px-3 pb-1 bg-amber-500 rounded-full  ">
+                                                        <div key={idx} className=" z-10 px-3 pb-1 bg-amber-500 rounded-full flex justify-center items-center text-center  ">
                                                             {tag}
                                                         </div>
                                                     ))}
