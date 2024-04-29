@@ -12,20 +12,25 @@ services:
    - mongo-vol:/data/db
   networks:
    - private
+  deploy:
+   resources:
+    limits:
+     cpus: '0.3' # Limit to approximately one third of a CPU core
+     memory: 256M # Limit to 256MB RAM
 
- mongo-express:
-  image: mongo-express
-  ports:
-   - 8081:8081
-  environment: 
-   ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
-   ME_CONFIG_BASICAUTH_USERNAME: "root" 
-   ME_CONFIG_BASICAUTH_PASSWORD: "password" 
-  networks:
-   - private
-   - public
-  depends_on:
-   - mongo-db
+#  mongo-express:
+#   image: mongo-express
+#   ports:
+#    - 8081:8081
+#   environment: 
+#    ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
+#    ME_CONFIG_BASICAUTH_USERNAME: "root" 
+#    ME_CONFIG_BASICAUTH_PASSWORD: "password" 
+#   networks:
+#    - private
+#    - public
+#   depends_on:
+#    - mongo-db
 
  sql-db:
   image: postgres
@@ -40,15 +45,31 @@ services:
       - postgres-vol:/var/lib/postgresql/data
   networks:
    - private
+  deploy:
+   resources:
+    limits:
+     cpus: '0.3' # Limit to approximately one third of a CPU core
+     memory: 256M # Limit to 256MB RAM
 
- adminer:
-  image: adminer
+ redis-db:
+  image: redis
   restart: always
-  ports:
-   - 8080:8080
   networks:
    - private
-   - public
+  deploy:
+   resources:
+    limits:
+     cpus: '0.2' # Limit to approximately one fifth of a CPU core
+     memory: 128M # Limit to 128MB RAM
+
+#  adminer:
+#   image: adminer
+#   restart: always
+#   ports:
+#    - 8080:8080
+#   networks:
+#    - private
+#    - public
 
  python-server: 
   image: py-server
@@ -59,6 +80,14 @@ services:
    - private
   depends_on: 
    - sql-db
+  deploy:
+   resources:
+    limits:
+     cpus: '0.3' # Limit to approximately one third of a CPU core
+     memory: 256M # Limit to 256MB RAM
+  environment:
+   - POSTGRES_CONN=sql-db
+   - REDIS_CONN=redis-db
 
  node-server: 
   image: express-server
@@ -74,6 +103,11 @@ services:
    - private
   depends_on: 
    - mongo-db
+  deploy:
+   resources:
+    limits:
+     cpus: '0.3' # Limit to approximately one third of a CPU core
+     memory: 256M # Limit to 256MB RAM
 
  view-server:
   image: react-local-server
@@ -82,6 +116,11 @@ services:
    - 8000:80
   environment:
    - REACT_APP_BASE_URL=http://localhost:8000
+  deploy:
+   resources:
+    limits:
+     cpus: '0.2' # Limit to approximately one third of a CPU core
+     memory: 128M # Limit to 256MB RAM
   
   networks:
    - private

@@ -8,6 +8,7 @@ POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
 POSTGRES_PASS = os.environ.get('POSTGRES_PASSWORD', 'password')
 POSTGRES_CONN = os.environ.get('POSTGRES_CONN', 'localhost')
 
+REDIS_CONN = os.environ.get('REDIS_CONN', 'localhost')
 
 SQLALCHEMY_DATABASE_URI = f'postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_CONN}:5432/vector-embeddings'
 

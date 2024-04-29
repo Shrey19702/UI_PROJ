@@ -1,31 +1,31 @@
 version: '3.1'
 services:
 
- mongo-db:
-  image: mongo
-  ports:
-   - 27017:27017
-  environment:
-   MONGO_INITDB_ROOT_USERNAME: "root"
-   MONGO_INITDB_ROOT_PASSWORD: "password"
-  volumes:
-   - mongo-vol:/data/db
-  networks:
-   - private
+#  mongo-db:
+#   image: mongo
+#   ports:
+#    - 27017:27017
+#   environment:
+#    MONGO_INITDB_ROOT_USERNAME: "root"
+#    MONGO_INITDB_ROOT_PASSWORD: "password"
+#   volumes:
+#    - mongo-vol:/data/db
+#   networks:
+#    - private
 
- mongo-express:
-  image: mongo-express
-  ports:
-   - 8081:8081
-  environment: 
-   ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
-   ME_CONFIG_BASICAUTH_USERNAME: "root" 
-   ME_CONFIG_BASICAUTH_PASSWORD: "password" 
-  networks:
-   - private
-   - public
-  depends_on:
-   - mongo-db
+#  mongo-express:
+#   image: mongo-express
+#   ports:
+#    - 8081:8081
+#   environment: 
+#    ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo-db:27017"
+#    ME_CONFIG_BASICAUTH_USERNAME: "root" 
+#    ME_CONFIG_BASICAUTH_PASSWORD: "password" 
+#   networks:
+#    - private
+#    - public
+#   depends_on:
+#    - mongo-db
 
  sql-db:
   image: postgres
@@ -46,6 +46,16 @@ services:
   restart: always
   ports:
    - 8080:8080
+  networks:
+   - private
+   - public
+
+ redis:
+  image: redis/redis-stack
+  restart: always
+  ports:
+   - 6379:6379
+   - 8001:8001
   networks:
    - private
    - public
@@ -95,4 +105,4 @@ networks:
  private:
 volumes:
  postgres-vol:
- mongo-vol:
+#  mongo-vol:
